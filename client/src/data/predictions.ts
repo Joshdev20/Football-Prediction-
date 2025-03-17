@@ -7,6 +7,17 @@ export interface Prediction {
   insights: string;
   recentResults: string[];
   headToHead: string[];
+  bettingAdvice: {
+    recommendation: string;
+    confidence: 'High' | 'Medium' | 'Low';
+    suggestedBets: string[];
+    predictedScore: string;
+    odds: {
+      home: number;
+      draw: number;
+      away: number;
+    };
+  };
 }
 
 function calculateWinProbability(team1: Team, team2: Team): number {
@@ -36,6 +47,68 @@ function calculateWinProbability(team1: Team, team2: Team): number {
 
   // Clamp between 20 and 80
   return Math.min(Math.max(finalProb, 20), 80);
+}
+
+function generateBettingAdvice(team1: Team, team2: Team, winProbability: number, expectedGoals: number): Prediction['bettingAdvice'] {
+  const avgTeam1Goals = team1.goalsScored / 5; // Average over last 5 games
+  const avgTeam2Goals = team2.goalsScored / 5;
+  const bothTeamsScore = avgTeam1Goals > 0.8 && avgTeam2Goals > 0.8;
+
+  // Predict score based on average goals and form
+  const team1PredictedGoals = Math.round((avgTeam1Goals + team1.form / 10) * 0.8);
+  const team2PredictedGoals = Math.round((avgTeam2Goals + team2.form / 10) * 0.8);
+
+  const suggestedBets: string[] = [];
+  let confidence: 'High' | 'Medium' | 'Low' = 'Medium';
+  let recommendation = '';
+
+  // Calculate basic odds based on win probability
+  const homeOdds = 100 / winProbability;
+  const awayOdds = 100 / (100 - winProbability);
+  const drawOdds = (homeOdds + awayOdds) / 2;
+
+  // Generate betting suggestions
+  if (winProbability > 65) {
+    suggestedBets.push(`${team1.name} to Win`);
+    confidence = 'High';
+  } else if (winProbability < 35) {
+    suggestedBets.push(`${team2.name} to Win`);
+    confidence = 'High';
+  } else {
+    suggestedBets.push('Double Chance');
+    confidence = 'Medium';
+  }
+
+  // Over/Under suggestions
+  if (expectedGoals > 2.5) {
+    suggestedBets.push('Over 2.5 Goals');
+  } else {
+    suggestedBets.push('Under 2.5 Goals');
+  }
+
+  // Both teams to score suggestion
+  if (bothTeamsScore) {
+    suggestedBets.push('Both Teams to Score (GG)');
+  }
+
+  // Generate main recommendation
+  if (confidence === 'High') {
+    recommendation = `Strong value in betting on ${winProbability > 65 ? team1.name : team2.name} to win`;
+  } else {
+    recommendation = 'Consider Double Chance or Goals market for better value';
+  }
+
+  return {
+    recommendation,
+    confidence,
+    suggestedBets,
+    predictedScore: `${team1PredictedGoals}-${team2PredictedGoals}`,
+    odds: {
+      home: Number(homeOdds.toFixed(2)),
+      draw: Number(drawOdds.toFixed(2)),
+      away: Number(awayOdds.toFixed(2)),
+    },
+  };
 }
 
 function getRecentResults(team: Team): string[] {
@@ -73,6 +146,7 @@ export function getPrediction(team1Id: string, team2Id: string): Prediction {
     insights: generateInsights(team1, team2, winProbability),
     recentResults: getRecentResults(team1),
     headToHead: getHeadToHead(team1, team2),
+    bettingAdvice: generateBettingAdvice(team1, team2, winProbability, expectedGoals),
   };
 }
 
