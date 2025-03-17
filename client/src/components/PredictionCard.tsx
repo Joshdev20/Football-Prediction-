@@ -30,9 +30,31 @@ export default function PredictionCard({ prediction }: PredictionCardProps) {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <h3 className="font-medium">Key Insights</h3>
-            <p className="text-sm text-muted-foreground">{prediction.insights}</p>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <h3 className="font-medium">Recent Results</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                {prediction.recentResults.map((result, i) => (
+                  <li key={i}>{result}</li>
+                ))}
+              </ul>
+            </div>
+
+            {prediction.headToHead.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="font-medium">Head-to-Head</h3>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  {prediction.headToHead.map((result, i) => (
+                    <li key={i}>{result}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <h3 className="font-medium">Key Insights</h3>
+              <p className="text-sm text-muted-foreground">{prediction.insights}</p>
+            </div>
           </div>
         </div>
       </CardContent>
