@@ -1,4 +1,4 @@
-import TeamComparison from "@/components/TeamComparison";
+import UpcomingMatches from "@/components/UpcomingMatches";
 import StatisticsChart from "@/components/StatisticsChart";
 
 const formData = [
@@ -23,15 +23,15 @@ export default function Home() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Football Predictions</h1>
         <p className="text-muted-foreground mt-2">
-          Compare teams and get AI-powered match predictions
+          AI-powered predictions for upcoming matches
         </p>
       </div>
 
-      <TeamComparison />
+      <UpcomingMatches />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <StatisticsChart
-          title="Team Form"
+          title="Average Form Rating"
           data={formData}
           color="hsl(var(--primary))"
         />
