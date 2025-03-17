@@ -35,7 +35,7 @@ export default function PredictionCard({ prediction }: PredictionCardProps) {
             <div className="space-y-2">
               <h3 className="font-medium">Recent Results</h3>
               <ul className="text-sm text-muted-foreground space-y-1">
-                {prediction.recentResults.map((result, i) => (
+                {prediction.recentResults.map((result: string, i: number) => (
                   <li key={i}>{result}</li>
                 ))}
               </ul>
@@ -45,7 +45,7 @@ export default function PredictionCard({ prediction }: PredictionCardProps) {
               <div className="space-y-2">
                 <h3 className="font-medium">Head-to-Head</h3>
                 <ul className="text-sm text-muted-foreground space-y-1">
-                  {prediction.headToHead.map((result, i) => (
+                  {prediction.headToHead.map((result: string, i: number) => (
                     <li key={i}>{result}</li>
                   ))}
                 </ul>
@@ -71,7 +71,7 @@ export default function PredictionCard({ prediction }: PredictionCardProps) {
               <div className="space-y-2">
                 <h4 className="text-sm font-medium">Suggested Bets</h4>
                 <div className="flex flex-wrap gap-2">
-                  {prediction.bettingAdvice.suggestedBets.map((bet, i) => (
+                  {prediction.bettingAdvice.suggestedBets.map((bet: string, i: number) => (
                     <Badge key={i} variant="outline">{bet}</Badge>
                   ))}
                 </div>
